@@ -1,0 +1,14 @@
+{
+  "name": "AI秘書",
+  "short_name": "AI秘書",
+  "description": "メモを放り込むだけでジャンル別・優先度別に整理してくれるタスク管理アプリ",
+  "display": "standalone",
+  "start_url": "./index.html",
+  "scope": "./",
+  "background_color": "#F7F6F3",
+  "theme_color": "#3B3A8F",
+  "lang": "ja",
+  "icons": [
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

@@ -72,7 +72,7 @@
   header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 18px 20px 14px;
+    padding: calc(env(safe-area-inset-top, 0px) + 26px) 20px 14px;
     position: sticky;
     top: 0;
     z-index: 10;
@@ -148,38 +148,6 @@
   .btn:active { transform: scale(.97); }
   .btn-add { background: var(--accent); color: #fff; border-color: transparent; }
   .btn-add:hover { opacity: .9; }
-  .btn-voice { background: var(--surface); color: var(--text); }
-  .btn-voice:hover { background: var(--bg); }
-  .btn-voice.listening {
-    background: var(--red); color: #fff; border-color: transparent;
-    animation: listening-pulse 1.3s ease-in-out infinite;
-  }
-  @keyframes listening-pulse {
-    0%,100% { box-shadow: 0 0 0 0 rgba(163,45,45,.35); }
-    50% { box-shadow: 0 0 0 7px rgba(163,45,45,0); }
-  }
-  .input-card.listening { border-color: var(--red); }
-  .listening-strip {
-    display: none;
-    align-items: center; gap: 8px;
-    padding: 9px 16px 0;
-    font-size: 12px; font-weight: 500; color: var(--red);
-  }
-  .input-card.listening .listening-strip { display: flex; }
-  .listening-bars { display: flex; align-items: center; gap: 2px; height: 12px; }
-  .listening-bars span {
-    width: 2.5px; background: var(--red); border-radius: 2px;
-    animation: bar-bounce 0.9s ease-in-out infinite;
-  }
-  .listening-bars span:nth-child(1) { height: 5px; animation-delay: 0s; }
-  .listening-bars span:nth-child(2) { height: 11px; animation-delay: .15s; }
-  .listening-bars span:nth-child(3) { height: 7px; animation-delay: .3s; }
-  .listening-bars span:nth-child(4) { height: 12px; animation-delay: .45s; }
-  .listening-bars span:nth-child(5) { height: 6px; animation-delay: .6s; }
-  @keyframes bar-bounce {
-    0%,100% { transform: scaleY(.4); }
-    50% { transform: scaleY(1); }
-  }
   .btn-sort {
     background: var(--surface); color: var(--accent);
     border-color: var(--accent); font-weight: 600;
@@ -486,14 +454,9 @@
 
 <main>
   <div class="input-card" id="inputCard">
-    <div class="listening-strip">
-      <div class="listening-bars"><span></span><span></span><span></span><span></span><span></span></div>
-      聞いています…
-    </div>
     <textarea id="memo" rows="4" placeholder="気になること、やること、なんでも…&#10;例：確定申告、ジム予約、車検、新しい本読む"></textarea>
     <div class="action-bar">
       <button class="btn btn-add" onclick="saveMemo()">＋ 追加</button>
-      <button class="btn btn-voice" id="voiceBtn" onclick="voice()">🎤 音声</button>
       <button class="btn btn-copy" id="copyBtn" onclick="copyAsText()">📋 まとめてテキスト</button>
       <button class="btn btn-sort" onclick="sortAndSwitch()">⚡ 整理する</button>
     </div>
@@ -760,8 +723,8 @@ const PRIORITY = {
   },
   p3: {
     patterns: [/.*/],
-    label: "後回し", cls: "badge-p3", dot: "dot-p3",
-    reason: t => match(t, [[/本|読書|勉強/,"自己投資、急がなくてOK"],[/旅行|計画/,"じっくり計画を"],[/.*/, "今すぐでなくてOK"]]),
+    label: "今月中", cls: "badge-p3", dot: "dot-p3",
+    reason: t => match(t, [[/本|読書|勉強/,"自己投資、今月中に"],[/旅行|計画/,"じっくり計画を"],[/.*/, "今月中に対応"]]),
   },
 };
 
@@ -933,33 +896,6 @@ function fallbackCopy(text, onDone) {
     toast("コピーに失敗しました");
   }
   document.body.removeChild(ta);
-}
-
-function voice() {
-  if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
-    toast("このブラウザは音声入力非対応です"); return;
-  }
-  const R = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const r = new R();
-  r.lang = "ja-JP";
-  const btn = document.getElementById("voiceBtn");
-  const card = document.getElementById("inputCard");
-
-  const stopListening = () => {
-    btn.classList.remove("listening");
-    btn.textContent = "🎤 音声";
-    card.classList.remove("listening");
-  };
-
-  r.onstart = () => {
-    btn.classList.add("listening");
-    btn.textContent = "● 録音中";
-    card.classList.add("listening");
-  };
-  r.onresult = e => { document.getElementById("memo").value = e.results[0][0].transcript; };
-  r.onerror = () => { toast("音声入力エラー"); stopListening(); };
-  r.onend = stopListening;
-  r.start();
 }
 
 function toast(msg) {

@@ -440,10 +440,9 @@
   <div class="header-inner">
     <div class="logo">
       <div class="logo-dot"></div>
-      AI秘書
+      TODO
     </div>
     <div class="header-right">
-      <span class="greeting-tag" id="greeting">読み込み中</span>
       <div class="time-stack">
         <span class="time-badge" id="clock">--:--</span>
         <span class="date-badge" id="dateLabel">----/--/--</span>
@@ -526,9 +525,7 @@ function updateClock() {
     now.toLocaleTimeString("ja-JP", {hour:"2-digit", minute:"2-digit"});
   document.getElementById("dateLabel").textContent =
     now.toLocaleDateString("ja-JP", {month:"short", day:"numeric", weekday:"short"});
-  document.getElementById("greeting").textContent =
-    h < 5 ? "夜更かし中" : h < 10 ? "おはよう" :
-    h < 14 ? "午前中" : h < 17 ? "午後" : h < 20 ? "夕方" : "夜";
+
 }
 
 function persist() { localStorage.setItem("tasks_v6", JSON.stringify(tasks)); }
@@ -701,6 +698,11 @@ const GENRES = [
     key: "people", label: "人間関係", icon: "👥",
     bg: "#FBEAF0", darkBg: "#4B1528",
     patterns: [/友達|友人|家族|親|連絡|食事|ランチ|飲み|飲み会|会う|遊ぶ|誕生日|プレゼント|お礼|お見舞い/],
+  },
+  {
+    key: "memo", label: "メモ", icon: "📝",
+    bg: "#F0F4FF", darkBg: "#1A2340",
+    patterns: [/メモ|備忘|覚え|ふせん|アイデア|思い付き|ひとこと|雑記|メモ書き/],
   },
   {
     key: "other", label: "その他", icon: "📦",
